@@ -6,32 +6,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
   <!-- 2. CONFIGURACIÓN PWA NATIVA (iOS Safari & Android Chrome Standalone) -->
-  <meta name="theme-color" content="#070709" />
+  <meta name="theme-color" content="#0b0c10" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Gym Timer" />
-  <meta name="application-name" content="PRO GYM TIMER" />
+  <meta name="apple-mobile-web-app-title" content="TITANIUM Timer" />
+  <meta name="application-name" content="TITANIUM Center Timer" />
   <meta name="format-detection" content="telephone=no" />
 
-  <!-- Icono SVG embebido para pantalla de inicio iOS/Android -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23070709'/%3E%3Crect x='36' y='36' width='440' height='440' rx='84' fill='none' stroke='%2300E676' stroke-width='16'/%3E%3Ccircle cx='256' cy='272' r='135' fill='none' stroke='%2300E676' stroke-width='28'/%3E%3Cpath d='M256 185v87l58 38' fill='none' stroke='%23FFB300' stroke-width='28' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='212' y='88' width='88' height='28' rx='14' fill='%2300E676'/%3E%3C/svg%3E" />
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23070709'/%3E%3Crect x='36' y='36' width='440' height='440' rx='84' fill='none' stroke='%2300E676' stroke-width='16'/%3E%3Ccircle cx='256' cy='272' r='135' fill='none' stroke='%2300E676' stroke-width='28'/%3E%3Cpath d='M256 185v87l58 38' fill='none' stroke='%23FFB300' stroke-width='28' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='212' y='88' width='88' height='28' rx='14' fill='%2300E676'/%3E%3C/svg%3E" />
+  <!-- Icono SVG embebido (Emblema Espartano TITANIUM Center) para pantalla de inicio iOS/Android -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230b0c10'/%3E%3Ccircle cx='256' cy='256' r='216' fill='%2314161d' stroke='%23E50914' stroke-width='18'/%3E%3Ccircle cx='256' cy='256' r='192' fill='none' stroke='%238a9ba8' stroke-width='6'/%3E%3Cpath d='M256 96c-72 0-124 54-124 132 0 62 32 118 82 158l18-68-44-26 52-14v-54h32v54l52 14-44 26 18 68c50-40 82-96 82-158 0-78-52-132-124-132z' fill='%23d8e0e8'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230b0c10'/%3E%3Ccircle cx='256' cy='256' r='216' fill='%2314161d' stroke='%23E50914' stroke-width='18'/%3E%3Ccircle cx='256' cy='256' r='192' fill='none' stroke='%238a9ba8' stroke-width='6'/%3E%3Cpath d='M256 96c-72 0-124 54-124 132 0 62 32 118 82 158l18-68-44-26 52-14v-54h32v54l52 14-44 26 18 68c50-40 82-96 82-158 0-78-52-132-124-132z' fill='%23d8e0e8'/%3E%3C/svg%3E" />
 
   <!-- Manifest.json embebido en Data URI para instalación "Add to Home Screen" -->
-  <link rel="manifest" id="pwaManifestLink" href='data:application/manifest+json,{"name":"PRO GYM TIMER — Marcador Digital","short_name":"GymTimer","description":"Cronómetro profesional de alto contraste para Gym, CrossFit y Boxeo","start_url":".","display":"standalone","orientation":"any","background_color":"#070709","theme_color":"#070709","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%27112%27 fill=%27%23070709%27/%3E%3Ccircle cx=%27256%27 cy=%27272%27 r=%27135%27 fill=%27none%27 stroke=%27%2300E676%27 stroke-width=%2728%27/%3E%3Cpath d=%27M256 185v87l58 38%27 fill=%27none%27 stroke=%27%23FFB300%27 stroke-width=%2728%27 stroke-linecap=%27round%27/%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}' />
+  <link rel="manifest" id="pwaManifestLink" href='data:application/manifest+json,{"name":"TITANIUM Center — Marcador Oficial","short_name":"TITANIUM","description":"Cronómetro profesional de alto contraste para Gym, CrossFit y Boxeo — TITANIUM Center","start_url":".","display":"standalone","orientation":"any","background_color":"#0b0c10","theme_color":"#0b0c10","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%27112%27 fill=%27%230b0c10%27/%3E%3Ccircle cx=%27256%27 cy=%27256%27 r=%27216%27 fill=%27%2314161d%27 stroke=%27%23E50914%27 stroke-width=%2718%27/%3E%3Cpath d=%27M256 96c-72 0-124 54-124 132 0 62 32 118 82 158l18-68-44-26 52-14v-54h32v54l52 14-44 26 18 68c50-40 82-96 82-158 0-78-52-132-124-132z%27 fill=%27%23d8e0e8%27/%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}' />
 
-  <title>PRO GYM TIMER — Mobile & PWA</title>
+  <title>TITANIUM Center — Marcador Deportivo</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Hoja de estilos externa -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <!-- Definición de gradientes SVG metálicos reutilizables para el casco espartano -->
+  <svg width="0" height="0" style="position:absolute;visibility:hidden;" aria-hidden="true">
+    <defs>
+      <linearGradient id="titaniumSilverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ffffff" />
+        <stop offset="35%" stop-color="#d8e0e8" />
+        <stop offset="70%" stop-color="#8a9ba8" />
+        <stop offset="100%" stop-color="#3a4750" />
+      </linearGradient>
+      <linearGradient id="titaniumCrimsonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ff3b47" />
+        <stop offset="50%" stop-color="#E50914" />
+        <stop offset="100%" stop-color="#8a0007" />
+      </linearGradient>
+    </defs>
+  </svg>
 
   <!-- Inicia con panel-collapsed por defecto para que en móvil el reloj ocupe el 100% desde el primer frame -->
   <div id="appContainer" class="app-container panel-collapsed">
@@ -39,7 +56,7 @@
     <div id="panelBackdrop" class="panel-backdrop"></div>
 
     <!-- ========================================================================
-         SECCIÓN 1: PANEL DE CONFIGURACIÓN / BOTTOM-SHEET TÁCTIL
+         SECCIÓN 1: PANEL DE CONFIGURACIÓN / BOTTOM-SHEET TÁCTIL (GLASSMORPHISM TITANIO)
          ======================================================================== -->
     <aside id="configPanel" class="config-panel" aria-label="Panel de Configuración">
       <div class="sheet-drag-handle" aria-hidden="true"></div>
@@ -57,8 +74,8 @@
         <!-- Presets Rápidos de 1 Clic: GYM, CROSSFIT, BOXEO -->
         <div>
           <div class="section-label">
-            <span>Presets de 1 Clic</span>
-            <span>TÁCTIL</span>
+            <span>Modalidad de Entrenamiento</span>
+            <span class="badge-metal">1 CLIC</span>
           </div>
           <div class="presets-grid">
             <button type="button" class="preset-btn active" data-preset="gym">
@@ -79,8 +96,8 @@
         <!-- Configuración de Tiempos y Rondas con teclado numérico nativo móvil -->
         <div>
           <div class="section-label">
-            <span>Parámetros del Entrenamiento</span>
-            <span>PERSONALIZAR</span>
+            <span>Parámetros del Cronómetro</span>
+            <span class="badge-metal">TITANIUM</span>
           </div>
 
           <div class="config-list">
@@ -203,10 +220,10 @@
     </aside>
 
     <!-- ========================================================================
-         SECCIÓN 2: DISPLAY PRINCIPAL DEL TEMPORIZADOR
+         SECCIÓN 2: DISPLAY PRINCIPAL DEL TEMPORIZADOR (BRANDING TITANIUM CENTER)
          ======================================================================== -->
     <main class="display-stage">
-      <!-- Barra Superior -->
+      <!-- Cabecera Superior con Logotipo Central "TITANIUM Center" -->
       <header class="stage-topbar">
         <div class="top-left-group">
           <button type="button" id="btnTogglePanel" class="icon-btn" title="Ajustes de Entrenamiento">
@@ -218,7 +235,30 @@
 
           <div id="wakeLockBadge" class="wakelock-badge" title="Screen Wake Lock (Evita que la pantalla se apague)">
             <span class="wakelock-dot"></span>
-            <span id="wakeLockText">Pantalla Activa: Lista</span>
+            <span id="wakeLockText">Pantalla Activa</span>
+          </div>
+        </div>
+
+        <!-- LOGOTIPO CORPORATIVO OFICIAL: TITANIUM Center -->
+        <div class="titanium-brand" aria-label="TITANIUM Center">
+          <div class="spartan-emblem" aria-hidden="true">
+            <svg viewBox="0 0 100 100" class="spartan-svg">
+              <!-- Anillo exterior carmesí y bisel interior de titanio -->
+              <circle cx="50" cy="50" r="46" fill="#0d0f14" stroke="url(#titaniumCrimsonGrad)" stroke-width="4" />
+              <circle cx="50" cy="50" r="40" fill="none" stroke="url(#titaniumSilverGrad)" stroke-width="1.8" stroke-dasharray="6 3" />
+              <!-- Cresta espartana estilizada -->
+              <path d="M50 11 C29 11 19 25 22 44 C31 32 41 27 50 27 C59 27 69 32 78 44 C81 25 71 11 50 11 Z" fill="url(#titaniumCrimsonGrad)" />
+              <!-- Casco Espartano / Gladiador Metálico -->
+              <path d="M50 23 C31 23 23 36 23 54 C23 69 31 81 42 88 L46 69 L32 61 L46 57 L46 42 L54 42 L54 57 L68 61 L54 69 L58 88 C69 81 77 69 77 54 C77 36 69 23 50 23 Z" fill="url(#titaniumSilverGrad)" />
+            </svg>
+          </div>
+          <div class="brand-wordmark">
+            <span class="brand-titanium">TITANIUM</span>
+            <div class="brand-center-row">
+              <span class="crimson-line"></span>
+              <span class="brand-center-sub">CENTER</span>
+              <span class="crimson-line"></span>
+            </div>
           </div>
         </div>
 
@@ -233,18 +273,10 @@
             </svg>
             <span id="muteText" class="btn-text">Campana ON</span>
           </button>
-
-          <!-- Botón Pantalla Completa -->
-          <button type="button" id="btnFullscreen" class="icon-btn" title="Pantalla Completa (F)" aria-label="Pantalla Completa">
-            <svg viewBox="0 0 24 24">
-              <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
-            </svg>
-            <span class="btn-text">Pantalla Completa</span>
-          </button>
         </div>
       </header>
 
-      <!-- Marcador Central -->
+      <!-- Marcador Central Industrial -->
       <section class="scoreboard-center" aria-live="polite">
         <!-- Indicador de Fase -->
         <div class="phase-banner">
@@ -252,8 +284,14 @@
           <h1 id="phaseLabel" class="phase-text">PREPARACIÓN</h1>
         </div>
 
-        <!-- Cronómetro Real de 7 Segmentos (Hardware LED) -->
+        <!-- Cronómetro Real de 7 Segmentos en Chasis Biselado de Titanio -->
         <div id="ledClockWrapper" class="led-clock-wrapper" role="timer" aria-label="00:10">
+          <!-- Tornillos / Remaches industriales decorativos en las 4 esquinas -->
+          <span class="bezel-bolt bolt-tl" aria-hidden="true"></span>
+          <span class="bezel-bolt bolt-tr" aria-hidden="true"></span>
+          <span class="bezel-bolt bolt-bl" aria-hidden="true"></span>
+          <span class="bezel-bolt bolt-br" aria-hidden="true"></span>
+
           <div class="seven-seg-board" id="sevenSegBoard">
             <!-- Dígito Minutos Decenas -->
             <div class="seg-digit" data-digit-index="0">
@@ -317,7 +355,7 @@
           </div>
         </div>
 
-        <!-- Contadores de Serie y Ronda -->
+        <!-- Contadores de Serie y Ronda con acabado Glassmorphism Metálico -->
         <div class="counters-grid">
           <div class="counter-box">
             <span class="counter-label">Serie</span>
@@ -339,7 +377,7 @@
         </div>
       </section>
 
-      <!-- Barra de Controles del Cronómetro (Ergonomía táctil >= 58px alto) -->
+      <!-- Barra de Controles del Cronómetro (Alineada en Grid para PC, Android y iPhone) -->
       <footer class="controls-bar">
         <button type="button" id="btnStartResume" class="ctrl-btn btn-start">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
