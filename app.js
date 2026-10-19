@@ -167,7 +167,7 @@
   };
 
   /* ========================================================================
-     3. DEFINICIÓN DE FASES, PRESETS (GYM, CROSSFIT, BOXEO) Y ESTADO
+     3. DEFINICIÓN DE FASES (PALETA TITANIUM CENTER), PRESETS Y ESTADO
      ======================================================================== */
   const PHASES = {
     PREP: 'PREP',
@@ -180,30 +180,30 @@
   const PHASE_THEMES = {
     [PHASES.PREP]: {
       title: 'PREPARACIÓN',
-      color: '#FFB300',
+      color: '#FFB300', /* Naranja / Ámbar Metálico */
       glow: 'rgba(255, 179, 0, 0.45)',
-      glowStrong: 'rgba(255, 179, 0, 0.85)',
+      glowStrong: 'rgba(255, 179, 0, 0.88)',
       bgTint: 'rgba(255, 179, 0, 0.06)'
     },
     [PHASES.WORK]: {
       title: '¡TRABAJO!',
-      color: '#00E676',
+      color: '#00E676', /* Verde Neón Intenso */
       glow: 'rgba(0, 230, 118, 0.45)',
-      glowStrong: 'rgba(0, 230, 118, 0.85)',
+      glowStrong: 'rgba(0, 230, 118, 0.88)',
       bgTint: 'rgba(0, 230, 118, 0.07)'
     },
     [PHASES.REST_SHORT]: {
       title: 'DESCANSO',
-      color: '#FF1744',
-      glow: 'rgba(255, 23, 68, 0.45)',
-      glowStrong: 'rgba(255, 23, 68, 0.85)',
-      bgTint: 'rgba(255, 23, 68, 0.06)'
+      color: '#E50914', /* Rojo Carmesí Intenso TITANIUM */
+      glow: 'rgba(229, 9, 20, 0.5)',
+      glowStrong: 'rgba(255, 36, 48, 0.92)',
+      bgTint: 'rgba(229, 9, 20, 0.08)'
     },
     [PHASES.REST_LONG]: {
       title: 'DESCANSO DE RONDA',
-      color: '#00E5FF',
+      color: '#00E5FF', /* Azul / Cian Titanio */
       glow: 'rgba(0, 229, 255, 0.45)',
-      glowStrong: 'rgba(0, 229, 255, 0.85)',
+      glowStrong: 'rgba(0, 229, 255, 0.88)',
       bgTint: 'rgba(0, 229, 255, 0.06)'
     },
     [PHASES.DONE]: {
@@ -308,7 +308,6 @@
     iconSoundOn: document.getElementById('iconSoundOn'),
     iconSoundOff: document.getElementById('iconSoundOff'),
     muteText: document.getElementById('muteText'),
-    btnFullscreen: document.getElementById('btnFullscreen'),
     wakeLockBadge: document.getElementById('wakeLockBadge'),
     wakeLockText: document.getElementById('wakeLockText')
   };
@@ -367,7 +366,7 @@
      ======================================================================== */
   async function requestWakeLock() {
     if (!('wakeLock' in navigator)) {
-      dom.wakeLockText.textContent = 'Wake Lock: No soportado';
+      dom.wakeLockText.textContent = 'Wake Lock N/D';
       return;
     }
     try {
@@ -379,11 +378,11 @@
       wakeLockSentinel.addEventListener('release', () => {
         wakeLockSentinel = null;
         dom.wakeLockBadge.classList.remove('active');
-        dom.wakeLockText.textContent = 'Pantalla Activa: Lista';
+        dom.wakeLockText.textContent = 'Pantalla Activa';
       });
     } catch (_) {
       dom.wakeLockBadge.classList.remove('active');
-      dom.wakeLockText.textContent = 'Pantalla Activa: Lista';
+      dom.wakeLockText.textContent = 'Pantalla Activa';
     }
   }
 
@@ -766,19 +765,6 @@
     setPanelCollapsed(!isCollapsed);
   }
 
-  function toggleFullscreen() {
-    const docEl = document.documentElement;
-    const requestFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
-    const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
-    const isFs = document.fullscreenElement || document.webkitFullscreenElement;
-
-    if (!isFs && requestFs) {
-      requestFs.call(docEl).catch(() => {});
-    } else if (isFs && exitFs) {
-      exitFs.call(document).catch(() => {});
-    }
-  }
-
   function toggleMute() {
     sound.unlockAudio();
     sound.isMuted = !sound.isMuted;
@@ -820,7 +806,6 @@
     dom.panelBackdrop.addEventListener('click', () => setPanelCollapsed(true));
 
     dom.btnMute.addEventListener('click', toggleMute);
-    dom.btnFullscreen.addEventListener('click', toggleFullscreen);
 
     dom.btnSaveConfig.addEventListener('click', () => {
       sound.unlockAudio();
@@ -911,8 +896,6 @@
         }
       } else if (e.key === 'r' || e.key === 'R') {
         resetTimer();
-      } else if (e.key === 'f' || e.key === 'F') {
-        toggleFullscreen();
       } else if (e.key === 'm' || e.key === 'M') {
         toggleMute();
       }
