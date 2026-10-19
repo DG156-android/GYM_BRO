@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 1. VIEWPORT MÓVIL CRÍTICO: Evita zoom accidental y habilita Safe Areas para iPhone Notch / Dynamic Island -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+  <!-- 2. CONFIGURACIÓN PWA NATIVA (iOS Safari & Android Chrome Standalone) -->
+  <meta name="theme-color" content="#070709" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Gym Timer" />
+  <meta name="application-name" content="PRO GYM TIMER" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- Icono SVG embebido para pantalla de inicio iOS/Android -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23070709'/%3E%3Crect x='36' y='36' width='440' height='440' rx='84' fill='none' stroke='%2300E676' stroke-width='16'/%3E%3Ccircle cx='256' cy='272' r='135' fill='none' stroke='%2300E676' stroke-width='28'/%3E%3Cpath d='M256 185v87l58 38' fill='none' stroke='%23FFB300' stroke-width='28' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='212' y='88' width='88' height='28' rx='14' fill='%2300E676'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23070709'/%3E%3Crect x='36' y='36' width='440' height='440' rx='84' fill='none' stroke='%2300E676' stroke-width='16'/%3E%3Ccircle cx='256' cy='272' r='135' fill='none' stroke='%2300E676' stroke-width='28'/%3E%3Cpath d='M256 185v87l58 38' fill='none' stroke='%23FFB300' stroke-width='28' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='212' y='88' width='88' height='28' rx='14' fill='%2300E676'/%3E%3C/svg%3E" />
+
+  <!-- Manifest.json embebido en Data URI para instalación "Add to Home Screen" -->
+  <link rel="manifest" id="pwaManifestLink" href='data:application/manifest+json,{"name":"PRO GYM TIMER — Marcador Digital","short_name":"GymTimer","description":"Cronómetro profesional de alto contraste para Gym, CrossFit y Boxeo","start_url":".","display":"standalone","orientation":"any","background_color":"#070709","theme_color":"#070709","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%27112%27 fill=%27%23070709%27/%3E%3Ccircle cx=%27256%27 cy=%27272%27 r=%27135%27 fill=%27none%27 stroke=%27%2300E676%27 stroke-width=%2728%27/%3E%3Cpath d=%27M256 185v87l58 38%27 fill=%27none%27 stroke=%27%23FFB300%27 stroke-width=%2728%27 stroke-linecap=%27round%27/%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}' />
+
+  <title>PRO GYM TIMER — Mobile & PWA</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Hoja de estilos externa -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Inicia con panel-collapsed por defecto para que en móvil el reloj ocupe el 100% desde el primer frame -->
+  <div id="appContainer" class="app-container panel-collapsed">
+    <!-- Backdrop oscuro para el Bottom-Sheet en móviles -->
+    <div id="panelBackdrop" class="panel-backdrop"></div>
+
+    <!-- ========================================================================
+         SECCIÓN 1: PANEL DE CONFIGURACIÓN / BOTTOM-SHEET TÁCTIL
+         ======================================================================== -->
+    <aside id="configPanel" class="config-panel" aria-label="Panel de Configuración">
+      <div class="sheet-drag-handle" aria-hidden="true"></div>
+      <div class="panel-header">
+        <div class="brand-title">
+          <span class="brand-dot"></span>
+          <span>CONFIGURAR SESIÓN</span>
+        </div>
+        <button id="btnCloseMobilePanel" class="step-btn close-drawer-mobile" title="Cerrar panel" aria-label="Cerrar panel">
+          ✕
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <!-- Presets Rápidos de 1 Clic: GYM, CROSSFIT, BOXEO -->
+        <div>
+          <div class="section-label">
+            <span>Presets de 1 Clic</span>
+            <span>TÁCTIL</span>
+          </div>
+          <div class="presets-grid">
+            <button type="button" class="preset-btn active" data-preset="gym">
+              <span class="preset-name">GYM</span>
+              <span class="preset-desc">4x 45s/60s · 3 Rnd</span>
+            </button>
+            <button type="button" class="preset-btn" data-preset="crossfit">
+              <span class="preset-name">CROSSFIT</span>
+              <span class="preset-desc">8x 40s/20s · 2 Rnd</span>
+            </button>
+            <button type="button" class="preset-btn" data-preset="boxing">
+              <span class="preset-name">BOXEO</span>
+              <span class="preset-desc">1x 3m/1m · 5 Rnd</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Configuración de Tiempos y Rondas con teclado numérico nativo móvil -->
+        <div>
+          <div class="section-label">
+            <span>Parámetros del Entrenamiento</span>
+            <span>PERSONALIZAR</span>
+          </div>
+
+          <div class="config-list">
+            <!-- Preparación Inicial -->
+            <div class="config-card prep">
+              <div class="config-info">
+                <span class="config-title">Preparación Inicial</span>
+                <span class="config-subtitle">Cuenta atrás antes de empezar</span>
+              </div>
+              <div class="time-inputs">
+                <div class="input-group">
+                  <input type="number" id="prepMin" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="0" />
+                  <span>Min</span>
+                </div>
+                <span class="time-sep">:</span>
+                <div class="input-group">
+                  <input type="number" id="prepSec" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="10" />
+                  <span>Seg</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tiempo de Trabajo -->
+            <div class="config-card work">
+              <div class="config-info">
+                <span class="config-title">Tiempo de Trabajo</span>
+                <span class="config-subtitle">Ejercicio activo por serie</span>
+              </div>
+              <div class="time-inputs">
+                <div class="input-group">
+                  <input type="number" id="workMin" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="0" />
+                  <span>Min</span>
+                </div>
+                <span class="time-sep">:</span>
+                <div class="input-group">
+                  <input type="number" id="workSec" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="45" />
+                  <span>Seg</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Descanso Corto entre Series -->
+            <div class="config-card rest-short">
+              <div class="config-info">
+                <span class="config-title">Descanso entre Series</span>
+                <span class="config-subtitle">Pausa corta de recuperación</span>
+              </div>
+              <div class="time-inputs">
+                <div class="input-group">
+                  <input type="number" id="restShortMin" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="1" />
+                  <span>Min</span>
+                </div>
+                <span class="time-sep">:</span>
+                <div class="input-group">
+                  <input type="number" id="restShortSec" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="0" />
+                  <span>Seg</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Número de Series por Ronda -->
+            <div class="config-card neutral">
+              <div class="config-info">
+                <span class="config-title">Series por Ronda</span>
+                <span class="config-subtitle">Repeticiones de trabajo</span>
+              </div>
+              <div class="stepper-control">
+                <button type="button" class="step-btn" data-step-target="setsPerRound" data-step="-1" aria-label="Disminuir series">−</button>
+                <input type="number" id="setsPerRound" class="num-input" inputmode="numeric" pattern="[0-9]*" min="1" max="99" value="4" />
+                <button type="button" class="step-btn" data-step-target="setsPerRound" data-step="1" aria-label="Aumentar series">+</button>
+              </div>
+            </div>
+
+            <!-- Descanso Largo entre Rondas -->
+            <div class="config-card rest-long">
+              <div class="config-info">
+                <span class="config-title">Descanso entre Rondas</span>
+                <span class="config-subtitle">Pausa larga al cerrar ronda</span>
+              </div>
+              <div class="time-inputs">
+                <div class="input-group">
+                  <input type="number" id="restLongMin" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="1" />
+                  <span>Min</span>
+                </div>
+                <span class="time-sep">:</span>
+                <div class="input-group">
+                  <input type="number" id="restLongSec" class="num-input" inputmode="numeric" pattern="[0-9]*" min="0" max="59" value="30" />
+                  <span>Seg</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Número Total de Rondas -->
+            <div class="config-card neutral">
+              <div class="config-info">
+                <span class="config-title">Total de Rondas</span>
+                <span class="config-subtitle">Bloques completos de sesión</span>
+              </div>
+              <div class="stepper-control">
+                <button type="button" class="step-btn" data-step-target="totalRounds" data-step="-1" aria-label="Disminuir rondas">−</button>
+                <input type="number" id="totalRounds" class="num-input" inputmode="numeric" pattern="[0-9]*" min="1" max="99" value="3" />
+                <button type="button" class="step-btn" data-step-target="totalRounds" data-step="1" aria-label="Aumentar rondas">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen de duración total y botón de guardado -->
+        <div class="total-summary">
+          <span>Duración Total Estimada:</span>
+          <strong id="totalSessionTime">21:10</strong>
+        </div>
+
+        <div class="save-bar">
+          <button type="button" id="btnSaveConfig" class="btn-apply">
+            ✓ Guardar y Aplicar al Reloj
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================================================================
+         SECCIÓN 2: DISPLAY PRINCIPAL DEL TEMPORIZADOR
+         ======================================================================== -->
+    <main class="display-stage">
+      <!-- Barra Superior -->
+      <header class="stage-topbar">
+        <div class="top-left-group">
+          <button type="button" id="btnTogglePanel" class="icon-btn" title="Ajustes de Entrenamiento">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+            </svg>
+            <span id="togglePanelText" class="btn-text">Configurar</span>
+          </button>
+
+          <div id="wakeLockBadge" class="wakelock-badge" title="Screen Wake Lock (Evita que la pantalla se apague)">
+            <span class="wakelock-dot"></span>
+            <span id="wakeLockText">Pantalla Activa: Lista</span>
+          </div>
+        </div>
+
+        <div class="top-right-group">
+          <!-- Botón Unificado de Campana / Audio -->
+          <button type="button" id="btnMute" class="icon-btn" title="Alternar Campana / Audio (M)">
+            <svg id="iconSoundOn" viewBox="0 0 24 24">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+            <svg id="iconSoundOff" class="hidden" viewBox="0 0 24 24">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-11c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68c-.24.06-.47.15-.69.23L18 13.1V11zM5.41 3.35L4 4.76l2.81 2.81C6.29 8.57 6 9.74 6 11v5l-2 2v1h12.24l2.99 2.99 1.41-1.41L5.41 3.35z"/>
+            </svg>
+            <span id="muteText" class="btn-text">Campana ON</span>
+          </button>
+
+          <!-- Botón Pantalla Completa -->
+          <button type="button" id="btnFullscreen" class="icon-btn" title="Pantalla Completa (F)" aria-label="Pantalla Completa">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+            </svg>
+            <span class="btn-text">Pantalla Completa</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Marcador Central -->
+      <section class="scoreboard-center" aria-live="polite">
+        <!-- Indicador de Fase -->
+        <div class="phase-banner">
+          <span class="phase-pulse"></span>
+          <h1 id="phaseLabel" class="phase-text">PREPARACIÓN</h1>
+        </div>
+
+        <!-- Cronómetro Real de 7 Segmentos (Hardware LED) -->
+        <div id="ledClockWrapper" class="led-clock-wrapper" role="timer" aria-label="00:10">
+          <div class="seven-seg-board" id="sevenSegBoard">
+            <!-- Dígito Minutos Decenas -->
+            <div class="seg-digit" data-digit-index="0">
+              <span class="seg seg-a"></span>
+              <span class="seg seg-b"></span>
+              <span class="seg seg-c"></span>
+              <span class="seg seg-d"></span>
+              <span class="seg seg-e"></span>
+              <span class="seg seg-f"></span>
+              <span class="seg seg-g"></span>
+            </div>
+            <!-- Dígito Minutos Unidades -->
+            <div class="seg-digit" data-digit-index="1">
+              <span class="seg seg-a"></span>
+              <span class="seg seg-b"></span>
+              <span class="seg seg-c"></span>
+              <span class="seg seg-d"></span>
+              <span class="seg seg-e"></span>
+              <span class="seg seg-f"></span>
+              <span class="seg seg-g"></span>
+            </div>
+
+            <!-- Dos Puntos Centrales LED -->
+            <div class="seg-colon">
+              <span class="colon-dot"></span>
+              <span class="colon-dot"></span>
+            </div>
+
+            <!-- Dígito Segundos Decenas -->
+            <div class="seg-digit" data-digit-index="2">
+              <span class="seg seg-a"></span>
+              <span class="seg seg-b"></span>
+              <span class="seg seg-c"></span>
+              <span class="seg seg-d"></span>
+              <span class="seg seg-e"></span>
+              <span class="seg seg-f"></span>
+              <span class="seg seg-g"></span>
+            </div>
+            <!-- Dígito Segundos Unidades -->
+            <div class="seg-digit" data-digit-index="3">
+              <span class="seg seg-a"></span>
+              <span class="seg seg-b"></span>
+              <span class="seg seg-c"></span>
+              <span class="seg seg-d"></span>
+              <span class="seg seg-e"></span>
+              <span class="seg seg-f"></span>
+              <span class="seg seg-g"></span>
+            </div>
+          </div>
+          <span id="clockDisplay" class="sr-only">00:10</span>
+        </div>
+
+        <!-- Barra de Progreso Visual -->
+        <div class="progress-wrapper">
+          <div class="progress-track">
+            <div id="progressBar" class="progress-fill"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="nextPhaseLabel">SIGUIENTE: TRABAJO (00:45)</span>
+            <span id="progressPercent">100%</span>
+          </div>
+        </div>
+
+        <!-- Contadores de Serie y Ronda -->
+        <div class="counters-grid">
+          <div class="counter-box">
+            <span class="counter-label">Serie</span>
+            <div class="counter-value">
+              <span id="currentSetDisplay" class="accent-num">1</span>
+              <span class="of-sep">de</span>
+              <span id="totalSetsDisplay">4</span>
+            </div>
+          </div>
+
+          <div class="counter-box">
+            <span class="counter-label">Ronda</span>
+            <div class="counter-value">
+              <span id="currentRoundDisplay" class="accent-num">1</span>
+              <span class="of-sep">de</span>
+              <span id="totalRoundsDisplay">3</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Barra de Controles del Cronómetro (Ergonomía táctil >= 58px alto) -->
+      <footer class="controls-bar">
+        <button type="button" id="btnStartResume" class="ctrl-btn btn-start">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <span id="startBtnText">Iniciar</span>
+        </button>
+
+        <button type="button" id="btnPause" class="ctrl-btn btn-pause hidden">
+          <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <span>Pausar</span>
+        </button>
+
+        <button type="button" id="btnReset" class="ctrl-btn btn-reset">
+          <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+          <span>Reiniciar</span>
+        </button>
+
+        <button type="button" id="btnSkipPhase" class="ctrl-btn btn-skip" title="Saltar a la siguiente fase" aria-label="Saltar fase">
+          <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          <span>Saltar</span>
+        </button>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Script externo -->
+  <script src="app.js"></script>
+</body>
+</html>

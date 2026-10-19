@@ -1,0 +1,1018 @@
+/* ==========================================================================
+   1. VARIABLES, SAFE AREAS Y ERGONOMÍA TÁCTIL MÓVIL
+   ========================================================================== */
+:root {
+  --bg-dark: #070709;
+  --bg-panel: #111217;
+  --bg-card: #181a22;
+  --bg-input: #0b0c10;
+  --border-color: #272b3a;
+  --text-main: #f3f4f6;
+  --text-muted: #8b92a5;
+
+  /* Colores de Fase (Neón) */
+  --color-prep: #FFB300;       /* Ámbar / Naranja */
+  --color-work: #00E676;       /* Verde Neón */
+  --color-rest-short: #FF1744; /* Rojo Neón */
+  --color-rest-long: #00E5FF;  /* Azul / Cian Neón */
+
+  /* Variables dinámicas activas */
+  --active-color: var(--color-prep);
+  --active-glow: rgba(255, 179, 0, 0.45);
+  --active-glow-strong: rgba(255, 179, 0, 0.85);
+  --active-bg-tint: rgba(255, 179, 0, 0.05);
+
+  /* Safe Areas para iPhone (Notch, Dynamic Island y Home Indicator) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-display: 'Orbitron', sans-serif;
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Ergonomía táctil: sin highlight azul ni selección accidental */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Permitir selección únicamente dentro de los inputs numéricos al editar */
+input.num-input {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Rejilla LED sutil de fondo */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==========================================================================
+   2. LAYOUT PRINCIPAL FLEXIBLE (CERO COLISIONES DE GRID EN MÓVIL)
+   ========================================================================== */
+.app-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   3. PANEL DE CONFIGURACIÓN (SIDEBAR EN DESKTOP / BOTTOM-SHEET EN MÓVIL)
+   ========================================================================== */
+.config-panel {
+  background-color: var(--bg-panel);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 390px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  transition: margin-left 0.35s cubic-bezier(0.32, 0.72, 0, 1), transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.25s ease;
+  z-index: 100;
+}
+
+/* En escritorio (>1024px) al colapsar se desplaza con margen negativo dejando el 100% al display */
+@media (min-width: 1025px) {
+  .app-container.panel-collapsed .config-panel {
+    margin-left: -390px;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Tirador superior para el Bottom-Sheet en móviles */
+.sheet-drag-handle {
+  display: none;
+  width: 44px;
+  height: 5px;
+  background: #3a3f54;
+  border-radius: 999px;
+  margin: 10px auto 2px;
+  flex-shrink: 0;
+}
+
+.panel-header {
+  padding: calc(16px + var(--safe-top)) 20px 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(17, 18, 23, 0.92);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+}
+
+.brand-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-work);
+  box-shadow: 0 0 10px var(--color-work);
+}
+
+.panel-body {
+  padding: 18px 20px calc(24px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Presets de 1 Clic: GYM, CROSSFIT, BOXEO (Mínimo 48px alto táctil) */
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.preset-btn {
+  min-height: 60px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 10px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  touch-action: manipulation;
+}
+
+.preset-btn:active {
+  transform: scale(0.96);
+}
+
+.preset-btn.active {
+  border-color: var(--color-work);
+  background: rgba(0, 230, 118, 0.14);
+  box-shadow: 0 0 14px rgba(0, 230, 118, 0.28);
+}
+
+.preset-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.76rem;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.preset-desc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+/* Tarjetas de Inputs Numéricos Táctiles */
+.config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.config-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--card-accent, var(--border-color));
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.config-card.prep { --card-accent: var(--color-prep); }
+.config-card.work { --card-accent: var(--color-work); }
+.config-card.rest-short { --card-accent: var(--color-rest-short); }
+.config-card.rest-long { --card-accent: var(--color-rest-long); }
+.config-card.neutral { --card-accent: #7c4dff; }
+
+.config-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.config-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.config-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group span {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* Inputs con tamaño mínimo táctil 48px para evitar zoom automático en iOS Safari */
+.num-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 1.25rem; /* >= 16px evita auto-zoom en iPhone */
+  width: 60px;
+  height: 48px;
+  text-align: center;
+  border-radius: 8px;
+  outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.num-input::-webkit-outer-spin-button,
+.num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.num-input:focus {
+  border-color: var(--color-work);
+  box-shadow: 0 0 8px rgba(0, 230, 118, 0.35);
+}
+
+.time-sep {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.stepper-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Botones táctiles de 48x48px mínimo */
+.step-btn {
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.step-btn:active {
+  transform: scale(0.92);
+  background: #252936;
+}
+
+.total-summary {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.total-summary strong {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--text-main);
+  letter-spacing: 1px;
+}
+
+.btn-apply {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px;
+  background: linear-gradient(135deg, #00c853, #00e676);
+  border: none;
+  color: #04120a;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 230, 118, 0.3);
+  touch-action: manipulation;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-apply:active {
+  transform: scale(0.97);
+}
+
+/* ==========================================================================
+   4. DISPLAY PRINCIPAL DEL TEMPORIZADOR (100% ANCHO GARANTIZADO)
+   ========================================================================== */
+.display-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: calc(14px + var(--safe-top));
+  padding-bottom: calc(16px + var(--safe-bottom));
+  padding-left: calc(18px + var(--safe-left));
+  padding-right: calc(18px + var(--safe-right));
+  background: radial-gradient(circle at 50% 45%, var(--active-bg-tint) 0%, transparent 72%);
+  transition: background 0.4s ease;
+  overflow: hidden;
+}
+
+/* Barra Superior de Herramientas (Botones >= 48x48px) */
+.stage-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.top-left-group, .top-right-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: rgba(24, 25, 32, 0.9);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+.icon-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.icon-btn.muted {
+  border-color: var(--color-rest-short);
+  color: var(--color-rest-short);
+  background: rgba(255, 23, 68, 0.1);
+}
+
+.wakelock-badge {
+  font-size: 0.72rem;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wakelock-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #666;
+  flex-shrink: 0;
+}
+
+.wakelock-badge.active .wakelock-dot {
+  background: var(--color-work);
+  box-shadow: 0 0 8px var(--color-work);
+}
+
+/* ==========================================================================
+   5. MARCADOR CENTRAL DE 7 SEGMENTOS REAL
+   ========================================================================== */
+.scoreboard-center {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 0;
+  position: relative;
+  gap: 1.8vh;
+}
+
+.phase-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 26px;
+  border-radius: 999px;
+  border: 2px solid var(--active-color);
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 22px var(--active-glow), inset 0 0 14px var(--active-glow);
+  transition: all 0.3s ease;
+  max-width: 100%;
+}
+
+.phase-pulse {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--active-color);
+  box-shadow: 0 0 12px var(--active-color);
+  animation: pulseGlow 1.2s infinite alternate;
+  flex-shrink: 0;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.phase-text {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 3.2vw, 2.4rem);
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--active-color);
+  text-shadow: 0 0 16px var(--active-glow-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Caja del Reloj 7-Segmentos */
+.led-clock-wrapper {
+  position: relative;
+  width: min(100%, 880px);
+  padding: clamp(18px, 3vh, 42px) clamp(14px, 3.5vw, 60px);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(11, 12, 15, 0.96) 0%, rgba(5, 6, 8, 0.99) 100%);
+  border: 2px solid #1f222d;
+  box-shadow: 
+    0 20px 55px rgba(0, 0, 0, 0.9),
+    0 0 50px var(--active-glow),
+    inset 0 0 34px rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.3s ease, transform 0.15s ease;
+}
+
+.led-clock-wrapper.countdown-warning {
+  animation: finalWarningBeat 0.95s ease-in-out infinite;
+}
+
+@keyframes finalWarningBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.03); filter: brightness(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* Tablero de 4 dígitos de 7 segmentos */
+.seven-seg-board {
+  --digit-w: clamp(50px, 14.5vw, 148px);
+  --digit-h: calc(var(--digit-w) * 1.82);
+  --seg-t: calc(var(--digit-w) * 0.175);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 26px);
+  transform: skewX(-4deg);
+}
+
+.seg-digit {
+  position: relative;
+  width: var(--digit-w);
+  height: var(--digit-h);
+  flex-shrink: 0;
+}
+
+.seg {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.045);
+  transition: background-color 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+  border-radius: 3px;
+}
+
+.seg.on {
+  background-color: var(--active-color);
+  box-shadow:
+    0 0 10px var(--active-glow-strong),
+    0 0 24px var(--active-glow),
+    0 0 46px var(--active-glow);
+  filter: brightness(1.1);
+}
+
+/* Segmentos Horizontales (A, G, D) */
+.seg-a, .seg-g, .seg-d {
+  left: calc(var(--seg-t) * 0.65);
+  right: calc(var(--seg-t) * 0.65);
+  height: var(--seg-t);
+  clip-path: polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%);
+}
+.seg-a { top: 0; }
+.seg-g { top: calc(50% - (var(--seg-t) / 2)); }
+.seg-d { bottom: 0; }
+
+/* Segmentos Verticales (F, B, E, C) */
+.seg-f, .seg-b, .seg-e, .seg-c {
+  width: var(--seg-t);
+  height: calc(50% - (var(--seg-t) * 0.55));
+  clip-path: polygon(50% 0%, 100% 12%, 100% 88%, 50% 100%, 0% 88%, 0% 12%);
+}
+.seg-f { top: calc(var(--seg-t) * 0.35); left: 0; }
+.seg-b { top: calc(var(--seg-t) * 0.35); right: 0; }
+.seg-e { bottom: calc(var(--seg-t) * 0.35); left: 0; }
+.seg-c { bottom: calc(var(--seg-t) * 0.35); right: 0; }
+
+/* Dos puntos centrales */
+.seg-colon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: calc(var(--digit-h) * 0.68);
+  padding: 0 clamp(2px, 0.5vw, 10px);
+  flex-shrink: 0;
+}
+
+.colon-dot {
+  width: calc(var(--seg-t) * 1.05);
+  height: calc(var(--seg-t) * 1.05);
+  border-radius: 3px;
+  background-color: var(--active-color);
+  box-shadow: 0 0 12px var(--active-glow-strong), 0 0 28px var(--active-glow);
+}
+
+/* Barra de Progreso */
+.progress-wrapper {
+  width: min(100%, 880px);
+}
+
+.progress-track {
+  width: 100%;
+  height: 18px;
+  background: #101218;
+  border: 2px solid #252836;
+  border-radius: 999px;
+  overflow: hidden;
+  padding: 2px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--active-color);
+  box-shadow: 0 0 16px var(--active-glow-strong);
+  transition: width 0.1s linear, background-color 0.3s ease;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 2vw, 0.95rem);
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+}
+
+/* Contadores de SERIE y RONDA */
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: min(100%, 680px);
+}
+
+.counter-box {
+  background: linear-gradient(180deg, #15171e 0%, #0e1015 100%);
+  border: 1px solid #282c3a;
+  border-radius: 14px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.counter-label {
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.counter-value {
+  font-family: var(--font-mono);
+  font-size: clamp(1.65rem, 4.2vw, 3.2rem);
+  color: var(--text-main);
+  letter-spacing: 1px;
+}
+
+.counter-value .accent-num {
+  color: var(--active-color);
+  text-shadow: 0 0 14px var(--active-glow-strong);
+}
+
+.counter-value .of-sep {
+  font-size: 0.55em;
+  color: var(--text-muted);
+  margin: 0 4px;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   6. BARRA DE CONTROLES TÁCTILES GRANDES (PARTE INFERIOR)
+   ========================================================================== */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 5;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.ctrl-btn {
+  min-height: 58px;
+  padding: 0 18px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  touch-action: manipulation;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ctrl-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.ctrl-btn:active {
+  transform: scale(0.95);
+}
+
+.btn-start {
+  background: rgba(0, 230, 118, 0.16);
+  border-color: var(--color-work);
+  color: var(--color-work);
+  box-shadow: 0 0 22px rgba(0, 230, 118, 0.25);
+  flex: 1.3;
+}
+
+.btn-pause {
+  background: rgba(255, 179, 0, 0.16);
+  border-color: var(--color-prep);
+  color: var(--color-prep);
+  box-shadow: 0 0 22px rgba(255, 179, 0, 0.25);
+  flex: 1.3;
+}
+
+.btn-reset {
+  background: rgba(255, 23, 68, 0.12);
+  border-color: #52232d;
+  color: #ff6b81;
+}
+
+.btn-skip {
+  flex: 0.75;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-color);
+  color: var(--text-muted);
+  padding: 0 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   7. MODAL / HOJA INFERIOR (BOTTOM-SHEET) PARA MÓVIL Y TABLET (<= 1024px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  /* En móvil/tablet el panel es un Bottom-Sheet fijo fuera del flujo Flex */
+  .config-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    height: 85dvh;
+    margin-left: 0 !important;
+    border-right: none;
+    border-top: 1px solid #34394d;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.92);
+    transform: translateY(0%);
+  }
+
+  .app-container.panel-collapsed .config-panel {
+    transform: translateY(105%);
+    opacity: 1;
+    pointer-events: none;
+  }
+
+  .sheet-drag-handle {
+    display: block;
+  }
+
+  .panel-header {
+    padding: 10px 20px 14px;
+  }
+
+  .panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .app-container.panel-collapsed .panel-backdrop {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 1025px) {
+  .panel-backdrop,
+  .close-drawer-mobile {
+    display: none;
+  }
+}
+
+/* Ajustes específicos para teléfonos en modo Vertical (Portrait) */
+@media (max-width: 640px) {
+  .wakelock-badge span#wakeLockText {
+    display: none;
+  }
+  .wakelock-badge {
+    padding: 6px 10px;
+  }
+
+  .icon-btn span.btn-text {
+    font-size: 0.78rem;
+  }
+
+  /* Ocultar el texto de Pantalla Completa en móvil para dejar espacio limpio */
+  #btnFullscreen span.btn-text {
+    display: none;
+  }
+  #btnFullscreen {
+    padding: 0 12px;
+  }
+
+  .seven-seg-board {
+    --digit-w: clamp(46px, 16.5vw, 82px);
+    gap: 8px;
+  }
+
+  .ctrl-btn {
+    min-height: 56px;
+    font-size: 0.85rem;
+    padding: 0 10px;
+  }
+}
+
+/* ==========================================================================
+   8. MODO HORIZONTAL MÓVIL (LANDSCAPE FULLSCREEN OPTIMIZADO)
+   ========================================================================== */
+@media (max-height: 600px) and (orientation: landscape) {
+  .display-stage {
+    padding-top: calc(8px + var(--safe-top));
+    padding-bottom: calc(10px + var(--safe-bottom));
+    padding-left: calc(16px + var(--safe-left));
+    padding-right: calc(16px + var(--safe-right));
+  }
+
+  .icon-btn span.btn-text,
+  .wakelock-badge,
+  .progress-meta {
+    display: none !important;
+  }
+
+  .icon-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 10px;
+  }
+
+  .scoreboard-center {
+    gap: 6px;
+    margin: 0;
+  }
+
+  .phase-banner {
+    padding: 4px 18px;
+    border-width: 1.5px;
+  }
+
+  .phase-text {
+    font-size: clamp(0.95rem, 3.8vh, 1.35rem);
+    letter-spacing: 3px;
+  }
+
+  .led-clock-wrapper {
+    width: min(96%, 820px);
+    padding: clamp(10px, 2.5vh, 20px) clamp(16px, 4vw, 48px);
+    border-radius: 18px;
+  }
+
+  .seven-seg-board {
+    --digit-w: clamp(50px, 22vh, 125px);
+    gap: clamp(10px, 2.2vw, 24px);
+  }
+
+  .progress-wrapper {
+    width: min(96%, 820px);
+  }
+
+  .progress-track {
+    height: 10px;
+  }
+
+  .counters-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: min(96%, 520px);
+  }
+
+  .counter-box {
+    padding: 4px 14px;
+    flex-direction: row;
+    justify-content: space-between;
+    border-radius: 10px;
+  }
+
+  .counter-label {
+    font-size: 0.7rem;
+  }
+
+  .counter-value {
+    font-size: 1.35rem;
+  }
+
+  .controls-bar {
+    width: min(96%, 820px);
+    gap: 12px;
+  }
+
+  .ctrl-btn {
+    min-height: 48px;
+    font-size: 0.92rem;
+  }
+
+  .btn-skip {
+    display: none;
+  }
+}
